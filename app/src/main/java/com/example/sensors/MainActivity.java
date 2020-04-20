@@ -3,16 +3,14 @@ package com.example.sensors;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -85,19 +83,23 @@ public class MainActivity extends AppCompatActivity {
         sleepSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editor.putBoolean("SWITCH2", sleepSwitch.isChecked());
-                if (sleepSwitch.isChecked()) {
+                editor.putBoolean("SWITCH3", sleepSwitch.isChecked());
+                editor.apply();
+                if (!sleepSwitch.isChecked()) {
                     activeSleepMode();
-                }
-                else {
-                    boolean active = devicePolicyManager.isAdminActive(componentName);
-                    if (active) {
-                        devicePolicyManager.removeActiveAdmin(componentName);
-                    } else {
-                        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-                        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
-                        startActivityForResult(intent, 11);
+                } else {
+                    try {
+                        boolean active = devicePolicyManager.isAdminActive(componentName);
+                        if (active) {
+                            devicePolicyManager.removeActiveAdmin(componentName);
+                        } else {
+                            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
+                            startActivityForResult(intent, 11);
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         componentName = new ComponentName(this, DeviceAdmin.class);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         assert sensorManager != null;
-        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         SleepSensor sleepSensor = new SleepSensor(sensorManager, gravitySensor, sleepCriticalAngle);
         sleepSensor.setDevicePolicyManager(devicePolicyManager);
         sleepSensor.setComponentName(componentName);
@@ -122,12 +124,18 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
-            startActivityForResult(intent, 11);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 11) {
+            if (resultCode == Activity.RESULT_OK) {
+                sleepSwitch.setChecked(true);
+            } else {
+                sleepSwitch.setChecked(false);
+            }
+        }
     }
 }

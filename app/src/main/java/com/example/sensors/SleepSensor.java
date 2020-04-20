@@ -2,7 +2,6 @@ package com.example.sensors;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -33,13 +32,13 @@ public class SleepSensor implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         double dotProduct = -9.81 * sensorEvent.values[2];
-        double cosine = dotProduct / (9.81 * 9.81);
+        double a = Math.pow(sensorEvent.values[0], 2);
+        double b = Math.pow(sensorEvent.values[1], 2);
+        double c = Math.pow(sensorEvent.values[2], 2);
+        double size = Math.sqrt(a + b + c);
+        double cosine = dotProduct / (9.81 * size);
         double theta = Math.acos(cosine);
-//        if (theta < angle * Math.PI / 180) {
-//            devicePolicyManager.lockNow();
-//        }
-
-        if (sensorEvent.values[2] < -8) {
+        if (theta < angle * Math.PI / 180) {
             devicePolicyManager.lockNow();
         }
     }
