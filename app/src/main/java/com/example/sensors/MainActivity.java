@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity implements {
     private Switch heavySleepSwitch;
     private Switch vibrationSwitch;
     private Switch sleepSwitch;
@@ -45,17 +45,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sleepActivity();
             }
         });
-    }
-
-
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
     }
 
     public void sleepActivity() {
