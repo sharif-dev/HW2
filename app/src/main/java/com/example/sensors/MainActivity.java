@@ -2,9 +2,13 @@ package com.example.sensors;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +25,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private double sleepCriticalAngle = 0;
     private EditText angleText;
     private Button saveButton;
+    private SensorManager sensorManager;
+    private Sensor mSensor;
+    private DevicePolicyManager devicePolicyManager;
+    private ComponentName componentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 sleepActivity();
             }
         });
+
+        sleepSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sleepSwitch.isChecked()) {
+                    activeSleepFeature();
+                }
+            }
+        });
+
+
+    }
+
+    public void activeSleepFeature() {
+        devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        componentName = new ComponentName(this, DeviceAdmin.class);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        assert sensorManager != null;
+        mSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        SleepSensor sleepSensor = new SleepSensor(sensorManager, mSensor, sleepCriticalAngle);
+        sleepSensor.setDevicePolicyManager(devicePolicyManager);
+        sleepSensor.setComponentName(componentName);
     }
 
 
