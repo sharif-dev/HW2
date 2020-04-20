@@ -3,12 +3,14 @@ package com.example.sensors;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
@@ -30,11 +32,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         heavySleepButton = findViewById(R.id.first);
         vibrationButton = findViewById(R.id.second);
         sleepButton = findViewById(R.id.third);
-
+        final SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
+        heavySleepSwitch.setChecked(sharedPreferences.getBoolean("SWITCH1", false));
+        vibrationSwitch.setChecked(sharedPreferences.getBoolean("SWITCH2", false));
+        sleepSwitch.setChecked(sharedPreferences.getBoolean("SWITCH3", false));
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, sleep_activity.class));
+            }
+        });
+
+        heavySleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("SWITCH1", isChecked);
+            }
+        });
+        vibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("SWITCH1", isChecked);
+            }
+        });
+        sleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("SWITCH1", isChecked);
             }
         });
 
