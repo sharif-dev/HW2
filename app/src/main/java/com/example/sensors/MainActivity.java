@@ -44,6 +44,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 startActivity(new Intent(MainActivity.this, sleepActivity.class));
             }
         });
+        heavySleepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 4/20/20  
+            }
+        });
+        vibrationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: 4/20/20  
+            }
+        });
 
         heavySleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -54,13 +66,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         vibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editor.putBoolean("SWITCH1", isChecked);
+                editor.putBoolean("SWITCH2", isChecked);
             }
         });
         sleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editor.putBoolean("SWITCH1", isChecked);
+                editor.putBoolean("SWITCH3", isChecked);
             }
         });
 
