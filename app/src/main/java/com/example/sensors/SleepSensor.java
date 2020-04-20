@@ -19,7 +19,7 @@ public class SleepSensor implements SensorEventListener {
         this.sensorManager = sensorManager;
         this.gravitySensor = gravitySensor;
         this.angle = angle;
-
+        this.sensorManager.registerListener(SleepSensor.this , this.gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void setDevicePolicyManager(DevicePolicyManager devicePolicyManager) {
