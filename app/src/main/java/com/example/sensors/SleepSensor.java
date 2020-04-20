@@ -19,7 +19,7 @@ public class SleepSensor implements SensorEventListener {
         this.sensorManager = sensorManager;
         this.gravitySensor = gravitySensor;
         this.angle = angle;
-        this.sensorManager.registerListener(SleepSensor.this , this.gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(SleepSensor.this, this.gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     public void setDevicePolicyManager(DevicePolicyManager devicePolicyManager) {
@@ -35,7 +35,11 @@ public class SleepSensor implements SensorEventListener {
         double dotProduct = -9.81 * sensorEvent.values[2];
         double cosine = dotProduct / (9.81 * 9.81);
         double theta = Math.acos(cosine);
-        if (theta < angle * Math.PI / 180) {
+//        if (theta < angle * Math.PI / 180) {
+//            devicePolicyManager.lockNow();
+//        }
+
+        if (sensorEvent.values[2] < -8) {
             devicePolicyManager.lockNow();
         }
     }

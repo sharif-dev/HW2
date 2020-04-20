@@ -1,12 +1,16 @@
 package com.example.sensors;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +18,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity {
     private Switch heavySleepSwitch;
     private Switch vibrationSwitch;
     private Switch sleepSwitch;
@@ -22,6 +26,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button vibrationButton;
     private Button sleepButton;
     private double sleepCriticalAngle = 0.0;
+    private SensorManager sensorManager;
+    private Sensor gravitySensor;
+    private DevicePolicyManager devicePolicyManager;
+    private ComponentName componentName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,23 +82,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 editor.apply();
             }
         });
-        sleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        sleepSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                editor.putBoolean("SWITCH3", isChecked);
-                editor.apply();
+            public void onClick(View view) {
+                editor.putBoolean("SWITCH2", sleepSwitch.isChecked());
+                if (sleepSwitch.isChecked()) {
+                    activeSleepMode();
+                }
+                else {
+                    boolean active = devicePolicyManager.isAdminActive(componentName);
+                    if (active) {
+                        devicePolicyManager.removeActiveAdmin(componentName);
+                    } else {
+                        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
+                        startActivityForResult(intent, 11);
+                    }
+                }
             }
         });
 
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent sensorEvent) {
+    public void activeSleepMode() {
+        devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+        componentName = new ComponentName(this, DeviceAdmin.class);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        assert sensorManager != null;
+        gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        SleepSensor sleepSensor = new SleepSensor(sensorManager, gravitySensor, sleepCriticalAngle);
+        sleepSensor.setDevicePolicyManager(devicePolicyManager);
+        sleepSensor.setComponentName(componentName);
 
+        boolean active = devicePolicyManager.isAdminActive(componentName);
+        if (active) {
+            devicePolicyManager.removeActiveAdmin(componentName);
+        } else {
+            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
+            startActivityForResult(intent, 11);
+        }
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
