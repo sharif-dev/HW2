@@ -8,6 +8,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -35,9 +36,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         final SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
         sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
+
         heavySleepSwitch.setChecked(sharedPreferences.getBoolean("SWITCH1", false));
         vibrationSwitch.setChecked(sharedPreferences.getBoolean("SWITCH2", false));
         sleepSwitch.setChecked(sharedPreferences.getBoolean("SWITCH3", false));
+
         sleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,18 +64,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editor.putBoolean("SWITCH1", isChecked);
+                editor.apply();
             }
         });
         vibrationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editor.putBoolean("SWITCH2", isChecked);
+                editor.apply();
             }
         });
         sleepSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editor.putBoolean("SWITCH3", isChecked);
+                editor.apply();
             }
         });
 
