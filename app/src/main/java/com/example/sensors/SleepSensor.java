@@ -37,8 +37,9 @@ public class SleepSensor implements SensorEventListener {
         double c = Math.pow(sensorEvent.values[2], 2);
         double size = Math.sqrt(a + b + c);
         double cosine = dotProduct / (9.81 * size);
-        double theta = Math.acos(cosine);
-        if (theta < angle * Math.PI / 180) {
+        double sinus = Math.sqrt(1 - Math.pow(cosine, 2));
+        double theta = Math.asin(sinus);
+        if (Math.abs(theta) < angle * Math.PI / 180) {
             devicePolicyManager.lockNow();
         }
     }
