@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class sleep_activity extends AppCompatActivity {
+public class sleepActivity extends AppCompatActivity {
     private EditText angleText;
     private Button saveButton;
 
