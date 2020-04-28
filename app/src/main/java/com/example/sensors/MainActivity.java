@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         sleepButton = findViewById(R.id.third);
         final SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
-        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
 
         heavySleepSwitch.setChecked(sharedPreferences.getBoolean("SWITCH1", false));
         vibrationSwitch.setChecked(sharedPreferences.getBoolean("SWITCH2", false));
@@ -86,7 +85,20 @@ public class MainActivity extends AppCompatActivity {
                 editor.putBoolean("SWITCH3", sleepSwitch.isChecked());
                 editor.apply();
                 if (!sleepSwitch.isChecked()) {
-                    activeSleepMode();
+                    devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+                    try {
+                        boolean active = devicePolicyManager.isAdminActive(componentName);
+                        if (active) {
+                            devicePolicyManager.removeActiveAdmin(componentName);
+                        } else {
+                            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     try {
                         boolean active = devicePolicyManager.isAdminActive(componentName);
@@ -97,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
                             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
                             startActivityForResult(intent, 11);
+                            if (sleepSwitch.isChecked()) {
+                                activeSleepMode(sharedPreferences);
+                            }
                         }
                     } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -107,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void activeSleepMode() {
+    public void activeSleepMode(SharedPreferences sharedPreferences) {
+        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
         devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
         componentName = new ComponentName(this, DeviceAdmin.class);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -116,15 +132,6 @@ public class MainActivity extends AppCompatActivity {
         SleepSensor sleepSensor = new SleepSensor(sensorManager, gravitySensor, sleepCriticalAngle);
         sleepSensor.setDevicePolicyManager(devicePolicyManager);
         sleepSensor.setComponentName(componentName);
-
-        boolean active = devicePolicyManager.isAdminActive(componentName);
-        if (active) {
-            devicePolicyManager.removeActiveAdmin(componentName);
-        } else {
-            Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
-            intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
-        }
     }
 
     @Override
