@@ -9,24 +9,19 @@ import android.hardware.SensorManager;
 
 public class SleepSensor implements SensorEventListener {
     private SensorManager sensorManager;
-    private Sensor gravitySensor;
+    private Sensor accelerometerSensor;
     private double angle;
     private DevicePolicyManager devicePolicyManager;
-    private ComponentName componentName;
 
     public SleepSensor(SensorManager sensorManager, Sensor gravitySensor, double angle) {
         this.sensorManager = sensorManager;
-        this.gravitySensor = gravitySensor;
+        this.accelerometerSensor = gravitySensor;
         this.angle = angle;
-        this.sensorManager.registerListener(SleepSensor.this, this.gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        this.sensorManager.registerListener(SleepSensor.this, this.accelerometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void setDevicePolicyManager(DevicePolicyManager devicePolicyManager) {
         this.devicePolicyManager = devicePolicyManager;
-    }
-
-    public void setComponentName(ComponentName componentName) {
-        this.componentName = componentName;
     }
 
     @Override

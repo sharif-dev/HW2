@@ -8,12 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 
 public class sleepActivity extends AppCompatActivity {
     private EditText angleText;
-    private SharedPreferences sharedPreferences;
-
+    public SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
