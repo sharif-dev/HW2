@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".sleepActivity"></activity>
+        <activity android:name=".heavySleepActivity"></activity>
+        <activity android:name=".sleepActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,15 +18,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name= ".DeviceAdmin" android:permission= "android.permission.BIND_DEVICE_ADMIN" >
+
+        <receiver
+            android:name=".DeviceAdmin"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
-                android:name= "android.app.device_admin"
-                android:resource= "@xml/policies" />
+                android:name="android.app.device_admin"
+                android:resource="@xml/policies" />
+
             <intent-filter>
-                <action android:name= "android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <service android:name=".SleepService" android:enabled="true" />
+
+        <service
+            android:name=".SleepService"
+            android:enabled="true" />
     </application>
 
 </manifest>
