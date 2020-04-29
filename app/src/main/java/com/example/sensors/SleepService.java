@@ -1,8 +1,8 @@
 package com.example.sensors;
 
-import android.app.IntentService;
 import android.app.Service;
 import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,7 +20,8 @@ public class SleepService extends Service implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
     private double sleepCriticalAngle;
-    private DevicePolicyManager devicePolicyManager;
+    public static DevicePolicyManager devicePolicyManager;
+    public static ComponentName componentName;
 
     @Nullable
     @Override
@@ -33,14 +34,13 @@ public class SleepService extends Service implements SensorEventListener {
         super.onCreate();
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
-        devicePolicyManager = MainActivity.devicePolicyManager;
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        assert sensorManager != null;
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        assert sensorManager != null;
-        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, this.accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         return START_STICKY;
     }
@@ -62,7 +62,12 @@ public class SleepService extends Service implements SensorEventListener {
         double sinus = Math.sqrt(1 - Math.pow(cosine, 2));
         double theta = Math.asin(sinus);
         if (Math.abs(theta) < sleepCriticalAngle * Math.PI / 180) {
-            devicePolicyManager.lockNow();
+            if (devicePolicyManager != null) {
+                devicePolicyManager.lockNow();
+            } else {
+                devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+                devicePolicyManager.lockNow();
+            }
         }
     }
 

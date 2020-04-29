@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+
 public class MainActivity extends AppCompatActivity {
     private Switch heavySleepSwitch;
     private Switch vibrationSwitch;
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private Button vibrationButton;
     private Button sleepButton;
     public static DevicePolicyManager devicePolicyManager;
-    public static ComponentName componentName;
+    private ComponentName componentName;
     private Intent intent1;
 
 
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         boolean active = devicePolicyManager.isAdminActive(componentName);
                         if (active) {
                             devicePolicyManager.removeActiveAdmin(componentName);
+                            stopService(intent1);
                         } else {
                             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
@@ -128,6 +130,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 11) {
             if (resultCode == Activity.RESULT_OK) {
                 sleepSwitch.setChecked(true);
+                SleepService.devicePolicyManager = devicePolicyManager;
+                SleepService.componentName = componentName;
                 startService(intent1);
             } else {
                 sleepSwitch.setChecked(false);
