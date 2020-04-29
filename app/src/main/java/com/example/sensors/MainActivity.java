@@ -108,10 +108,6 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
                             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
                             startActivityForResult(intent, 11);
-                            if (sleepSwitch.isChecked()) {
-                                Intent intent1 = new Intent(MainActivity.this, SleepService.class);
-                                startService(intent1);
-                            }
                         }
                     } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -131,6 +127,15 @@ public class MainActivity extends AppCompatActivity {
                 sleepSwitch.setChecked(true);
             } else {
                 sleepSwitch.setChecked(false);
+            }
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (sleepSwitch.isChecked()) {
+                Intent intent1 = new Intent(MainActivity.this, SleepService.class);
+                startService(intent1);
             }
         }
     }
