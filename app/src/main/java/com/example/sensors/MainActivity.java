@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         heavySleepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 4/20/20  
+                startActivity(new Intent(MainActivity.this, heavySleepActivity.class));
             }
         });
         vibrationButton.setOnClickListener(new View.OnClickListener() {
