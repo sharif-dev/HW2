@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private Button sleepButton;
     public static DevicePolicyManager devicePolicyManager;
     public static ComponentName componentName;
+    private Intent intent1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         heavySleepButton = findViewById(R.id.first);
         vibrationButton = findViewById(R.id.second);
         sleepButton = findViewById(R.id.third);
+        intent1 = new Intent(MainActivity.this, SleepService.class);
         final SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                             intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
                             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
-
+                            stopService(intent1);
                         }
                     } catch (NullPointerException e) {
                         e.printStackTrace();
@@ -125,17 +128,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 11) {
             if (resultCode == Activity.RESULT_OK) {
                 sleepSwitch.setChecked(true);
+                startService(intent1);
             } else {
                 sleepSwitch.setChecked(false);
-            }
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (sleepSwitch.isChecked()) {
-                Intent intent1 = new Intent(MainActivity.this, SleepService.class);
-                startService(intent1);
             }
         }
     }

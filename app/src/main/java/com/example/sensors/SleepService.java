@@ -28,39 +28,27 @@ public class SleepService extends Service implements SensorEventListener {
         return null;
     }
 
-//    public void start(Context context) {
-//        Intent intent = new Intent(context, SleepService.class);
-//        context.startService(intent);
-//    }
-
     @Override
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
+        devicePolicyManager = MainActivity.devicePolicyManager;
     }
-
-//    @Override
-//    protected void onHandleIntent(@Nullable Intent intent) {
-//        if(intent != null) {
-//
-//        }
-//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
-        devicePolicyManager = MainActivity.devicePolicyManager;
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         assert sensorManager != null;
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(SleepService.this, this.accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, this.accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         sensorManager.unregisterListener(this);
+        super.onDestroy();
     }
 
     @Override
