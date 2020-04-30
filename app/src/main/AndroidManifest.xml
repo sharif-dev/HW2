@@ -34,6 +34,10 @@
         <service
             android:name=".SleepService"
             android:enabled="true" />
+        <receiver
+            android:name=".AlertReceiver"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>
