@@ -8,12 +8,10 @@ import android.provider.Settings;
 
 public class AlertReceiver extends BroadcastReceiver {
 
-    MediaPlayer player;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        player = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
-        player.start();
+        context.startActivity(new Intent(context, alarmActivity.class));
     }
 
 

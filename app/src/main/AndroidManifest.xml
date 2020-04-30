@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".heavySleepActivity"></activity>
+        <activity android:name=".alarmActivity"></activity>
+        <activity android:name=".AlertReceiverActivity" />
+        <activity android:name=".heavySleepActivity" />
         <activity android:name=".sleepActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -34,6 +36,7 @@
         <service
             android:name=".SleepService"
             android:enabled="true" />
+
         <receiver
             android:name=".AlertReceiver"
             android:enabled="true"

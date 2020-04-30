@@ -21,7 +21,7 @@ import android.widget.TimePicker;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class heavySleepActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class heavySleepActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
     private TextView time;
     private EditText speed_limit;
     private Button set, cancel, save;
