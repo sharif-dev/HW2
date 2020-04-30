@@ -7,9 +7,14 @@ import android.media.MediaPlayer;
 import android.provider.Settings;
 
 public class AlertReceiver extends BroadcastReceiver {
+
+    MediaPlayer player;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        MediaPlayer mediaPlayer = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
-        mediaPlayer.start();
+        player = MediaPlayer.create(context, Settings.System.DEFAULT_RINGTONE_URI);
+        player.start();
     }
+
+
 }

@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 } else {
+                    devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
                     try {
                         componentName = new ComponentName(MainActivity.this, DeviceAdmin.class);
                         boolean active = devicePolicyManager.isAdminActive(componentName);
