@@ -40,6 +40,9 @@
         <service
             android:name=".SleepService"
             android:enabled="true" />
+        <service
+            android:name=".Shake.shakeService"
+            android:enabled="true"/>
 
         <receiver
             android:name=".AlertReceiver"
