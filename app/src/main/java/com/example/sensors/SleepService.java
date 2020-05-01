@@ -33,7 +33,7 @@ public class SleepService extends Service implements SensorEventListener {
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "0.0"));
+        sleepCriticalAngle = Double.parseDouble(sharedPreferences.getString("ANGLE_TEXT", "10.0"));
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         assert sensorManager != null;
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
