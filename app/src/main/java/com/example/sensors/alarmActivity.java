@@ -5,12 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
-import android.provider.Settings;
+import android.provider.MediaStore;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class alarmActivity extends AppCompatActivity {
 
@@ -34,8 +37,14 @@ public class alarmActivity extends AppCompatActivity {
         vibrator.vibrate(timeLeftInMilliSeconds);
         gyroscope = new Gyroscope(this);
         time_txt = findViewById(R.id.time_text);
-        player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+        player = MediaPlayer.create(this, R.raw.song1);
         player.start();
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                player.start();
+            }
+        });
         countDownTimer = new CountDownTimer(timeLeftInMilliSeconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
