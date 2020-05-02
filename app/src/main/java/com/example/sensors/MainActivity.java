@@ -28,11 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private Button sleepButton;
     public static DevicePolicyManager devicePolicyManager;
     private ComponentName componentName;
+    private ComponentName componentName2;
     private Intent intent1;
-
-
     private Intent intent2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +42,9 @@ public class MainActivity extends AppCompatActivity {
         heavySleepButton = findViewById(R.id.first);
         vibrationButton = findViewById(R.id.second);
         sleepButton = findViewById(R.id.third);
+
         intent1 = new Intent(MainActivity.this, SleepService.class);
-
-
-
         intent2 = new Intent(MainActivity.this, shakeService.class);
-
-
 
         final SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -93,14 +87,14 @@ public class MainActivity extends AppCompatActivity {
                 if (!vibrationSwitch.isChecked()) {
                     devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
                     try {
-                        componentName = new ComponentName(MainActivity.this, DeviceAdmin.class);
-                        boolean active = devicePolicyManager.isAdminActive(componentName);
+                        componentName2 = new ComponentName(MainActivity.this, DeviceAdmin.class);
+                        boolean active = devicePolicyManager.isAdminActive(componentName2);
                         if (active) {
-                            devicePolicyManager.removeActiveAdmin(componentName);
+                            devicePolicyManager.removeActiveAdmin(componentName2);
                             stopService(intent2);
                         } else {
                             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName2);
                             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
                             stopService(intent2);
                         }
@@ -112,13 +106,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
                     try {
-                        componentName = new ComponentName(MainActivity.this, DeviceAdmin.class);
-                        boolean active = devicePolicyManager.isAdminActive(componentName);
+                        componentName2 = new ComponentName(MainActivity.this, DeviceAdmin.class);
+                        boolean active = devicePolicyManager.isAdminActive(componentName2);
                         if (active) {
-                            devicePolicyManager.removeActiveAdmin(componentName);
+                            devicePolicyManager.removeActiveAdmin(componentName2);
                         } else {
                             Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName2);
                             intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "You should enable the app!");
                             startActivityForResult(intent, 12);
                         }
@@ -190,9 +184,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK) {
                 vibrationSwitch.setChecked(true);
                 shakeService.mDevicePolicyManager = devicePolicyManager;
-                shakeService.mComponentName = componentName;
+                shakeService.mComponentName = componentName2;
                 startService(intent2);
-                Log.d("MMMMMMMMMMMMMMMMMMMM", "MainActivity");
             } else {
                 vibrationSwitch.setChecked(false);
             }
