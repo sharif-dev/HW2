@@ -17,11 +17,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class heavySleepActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
+public class heavySleepActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
     private TextView time;
     private EditText speed_limit;
     private Button set, cancel, save;
@@ -43,6 +44,7 @@ public class heavySleepActivity extends AppCompatActivity implements TimePickerD
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("SPEED_LIMIT", speed_limit.getText().toString());
                 myEdit.apply();
+                Toast.makeText(heavySleepActivity.this, "Speed limit saved", Toast.LENGTH_SHORT).show();
             }
         });
         set.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +52,9 @@ public class heavySleepActivity extends AppCompatActivity implements TimePickerD
             public void onClick(View v) {
                 DialogFragment timePicker = new TimePickerFragment();
                 timePicker.show(getSupportFragmentManager(), "time picker");
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("TIME_REMAINING", "600000");
+                myEdit.apply();
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {

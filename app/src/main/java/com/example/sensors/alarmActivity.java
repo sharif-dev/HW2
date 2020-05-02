@@ -2,22 +2,26 @@ package com.example.sensors;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class alarmActivity extends AppCompatActivity {
 
     private MediaPlayer player;
     private TextView time_txt;
     private CountDownTimer countDownTimer;
-    private long timeLeftInMilliSeconds = 10000; //10min
+    public long timeLeftInMilliSeconds; //10min
     private Gyroscope gyroscope;
     private SharedPreferences sharedPreferences;
     private Double speedLimit;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,9 @@ public class alarmActivity extends AppCompatActivity {
         setContentView(R.layout.activity_alarm);
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         speedLimit = Double.parseDouble(sharedPreferences.getString("SPEED_LIMIT", "1.0"));
+        timeLeftInMilliSeconds = Long.parseLong(sharedPreferences.getString("TIME_REMAINING", "600000"));
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(timeLeftInMilliSeconds);
         gyroscope = new Gyroscope(this);
         time_txt = findViewById(R.id.time_text);
         player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
@@ -39,12 +46,19 @@ public class alarmActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 player.release();
+                vibrator.cancel();
+                finish();
             }
         }.start();
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float rx, float ry, float rz) {
-                // TODO: 5/1/20 
+                if (Math.abs(rz) > Math.abs(speedLimit)) {
+                    player.release();
+                    vibrator.cancel();
+                    Toast.makeText(alarmActivity.this, "Alarm off", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
         });
     }

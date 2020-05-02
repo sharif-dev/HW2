@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class sleepActivity extends AppCompatActivity {
     private EditText angleText;
@@ -27,6 +28,7 @@ public class sleepActivity extends AppCompatActivity {
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("ANGLE_TEXT", angleText.getText().toString());
                 myEdit.apply();
+                Toast.makeText(sleepActivity.this, "Angle saved", Toast.LENGTH_SHORT).show();
             }
         });
 
