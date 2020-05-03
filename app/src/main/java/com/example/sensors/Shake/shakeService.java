@@ -10,7 +10,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
 import android.os.IBinder;
 
 public class shakeService extends Service implements SensorEventListener {
@@ -20,9 +19,9 @@ public class shakeService extends Service implements SensorEventListener {
     private double sleepCriticalSpeed;
     public static DevicePolicyManager mDevicePolicyManager;
     public static ComponentName mComponentName;
-    private float mAccel; // acceleration apart from gravity
-    private float mAccelCurrent; // current acceleration including gravity
-    private float mAccelLast; // last acceleration including gravity
+
+    private float mAccelCurrent;
+    private float mAccelLast;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -34,16 +33,19 @@ public class shakeService extends Service implements SensorEventListener {
         super.onCreate();
 
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        sleepCriticalSpeed = Double.parseDouble(sharedPreferences.getString("SPEED_TEXT", "11.0"));
+        sleepCriticalSpeed = Double.parseDouble(sharedPreferences.getString("SPEED_TEXT", "8"));
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        mAccelCurrent = 9.80999660f;
+        mAccelLast = 9.80999660f;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI, new Handler());
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
         return START_STICKY;
     }
 
@@ -59,20 +61,21 @@ public class shakeService extends Service implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
-        mAccelLast = mAccelCurrent;
-        mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
-        float delta = mAccelCurrent - mAccelLast;
-        mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
 
-        if (mAccel > sleepCriticalSpeed) {
-            if (mDevicePolicyManager != null) {
-                mDevicePolicyManager.lockNow();
-            } else {
-                mDevicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-                mDevicePolicyManager.lockNow();
+            if (Math.abs(delta * 1000000) >= sleepCriticalSpeed) {
+                if (mDevicePolicyManager != null) {
+                    mDevicePolicyManager.lockNow();
+                } else {
+                    mDevicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+                    mDevicePolicyManager.lockNow();
+                }
             }
         }
     }
