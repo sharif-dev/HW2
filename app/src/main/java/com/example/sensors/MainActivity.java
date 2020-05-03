@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.example.sensors.Shake.ShakeActivity;
 import com.example.sensors.Shake.shakeService;
 
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         vibrationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: 4/20/20  
+                startActivity(new Intent(MainActivity.this, ShakeActivity.class));
             }
         });
 

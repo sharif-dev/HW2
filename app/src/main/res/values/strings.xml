@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Sensors</string>
+    <string name="vibDefVal">0.0</string>
+    <string name="vibTextView">In this page, you can manually set the critical speed between 0 to 10 for sleep mode</string>
     <string-array name="numbers">
         <item>1</item>
         <item>2</item>

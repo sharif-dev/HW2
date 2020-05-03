@@ -11,6 +11,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
+import com.example.sensors.R;
 
 public class shakeService extends Service implements SensorEventListener {
     private SensorManager mSensorManager;
@@ -19,6 +20,8 @@ public class shakeService extends Service implements SensorEventListener {
     private double sleepCriticalSpeed;
     public static DevicePolicyManager mDevicePolicyManager;
     public static ComponentName mComponentName;
+
+    private static final double speedBaseValue = 20;
 
     private float mAccelCurrent;
     private float mAccelLast;
@@ -31,15 +34,14 @@ public class shakeService extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         super.onCreate();
-
         sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        sleepCriticalSpeed = Double.parseDouble(sharedPreferences.getString("SPEED_TEXT", "8"));
+        sleepCriticalSpeed = Double.parseDouble(sharedPreferences.getString("SPEED_TEXT", getString(R.string.vibDefVal)));
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        mAccelCurrent = 9.80999660f;
-        mAccelLast = 9.80999660f;
+        mAccelCurrent = 0;
+        mAccelLast = 0;
     }
 
     @Override
@@ -62,14 +64,22 @@ public class shakeService extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            sleepCriticalSpeed = Double.parseDouble(sharedPreferences.getString("SPEED_TEXT", getString(R.string.vibDefVal)));
+
             float x = event.values[0];
             float y = event.values[1];
             float z = event.values[2];
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
-            float delta = mAccelCurrent - mAccelLast;
 
-            if (Math.abs(delta * 1000000) >= sleepCriticalSpeed) {
+            float now = (float) Math.sqrt(x*x + y*y + z*z);
+
+            if(mAccelLast == 0 && mAccelCurrent == 0){
+                mAccelLast = now;
+            }else{
+                mAccelLast = mAccelCurrent;
+            }
+            mAccelCurrent = now;
+            float delta = mAccelCurrent - mAccelLast;
+            if (Math.abs(delta) >= speedBaseValue + sleepCriticalSpeed) {
                 if (mDevicePolicyManager != null) {
                     mDevicePolicyManager.lockNow();
                 } else {
