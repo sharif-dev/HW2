@@ -12,6 +12,7 @@ public class AlertReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         context.startActivity(new Intent(context, alarmActivity.class));
+        // start activity without flag
     }
 
 
