@@ -37,7 +37,48 @@ public class alarmActivity extends AppCompatActivity {
         vibrator.vibrate(timeLeftInMilliSeconds);
         gyroscope = new Gyroscope(this);
         time_txt = findViewById(R.id.time_text);
-        player = MediaPlayer.create(this, R.raw.song1);
+        switch (getIntent().getStringExtra("RING")) {
+            case "1": {
+                player = MediaPlayer.create(this, R.raw.song1);
+                break;
+            }
+            case "2": {
+                player = MediaPlayer.create(this, R.raw.song2);
+                break;
+            }
+            case "3": {
+                player = MediaPlayer.create(this, R.raw.song3);
+                break;
+            }
+            case "4": {
+                player = MediaPlayer.create(this, R.raw.song4);
+                break;
+            }
+            case "5": {
+                player = MediaPlayer.create(this, R.raw.song5);
+                break;
+            }
+            case "6": {
+                player = MediaPlayer.create(this, R.raw.song6);
+                break;
+            }
+            case "7": {
+                player = MediaPlayer.create(this, R.raw.song7);
+                break;
+            }
+            case "8": {
+                player = MediaPlayer.create(this, R.raw.song8);
+                break;
+            }
+            case "9": {
+                player = MediaPlayer.create(this, R.raw.song9);
+                break;
+            }
+            case "10": {
+                player = MediaPlayer.create(this, R.raw.song10);
+                break;
+            }
+        }
         player.start();
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override

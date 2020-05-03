@@ -11,8 +11,11 @@ public class AlertReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startActivity(new Intent(context, alarmActivity.class));
-        // start activity without flag
+
+        Intent intent1 = new Intent(context, alarmActivity.class);
+        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent1.putExtra("RING", intent.getStringExtra("RINGTONE"));
+        context.startActivity(intent1);
     }
 
 
