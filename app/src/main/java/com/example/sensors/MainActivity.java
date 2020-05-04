@@ -81,7 +81,14 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editor.putBoolean("SWITCH1", isChecked);
                 editor.apply();
+                if (!isChecked) {
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent intent = new Intent(MainActivity.this, AlertReceiver.class);
+                    intent.putExtra("RINGTONE", "1");
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
 
+                    alarmManager.cancel(pendingIntent);
+                }
             }
         });
         vibrationSwitch.setOnClickListener(new View.OnClickListener() {
