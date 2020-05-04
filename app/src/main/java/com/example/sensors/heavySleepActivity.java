@@ -56,11 +56,15 @@ public class heavySleepActivity extends AppCompatActivity implements TimePickerD
         set.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment timePicker = new TimePickerFragment();
-                timePicker.show(getSupportFragmentManager(), "time picker");
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("TIME_REMAINING", "600000");
-                myEdit.apply();
+                if (sharedPreferences.getBoolean("SWITCH1", false)) {
+                    DialogFragment timePicker = new TimePickerFragment();
+                    timePicker.show(getSupportFragmentManager(), "time picker");
+                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                    myEdit.putString("TIME_REMAINING", "600000");
+                    myEdit.apply();
+                } else {
+                    Toast.makeText(heavySleepActivity.this, "Please active this feature", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {

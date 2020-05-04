@@ -4,9 +4,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 editor.putBoolean("SWITCH1", isChecked);
                 editor.apply();
+
             }
         });
         vibrationSwitch.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 sleepSwitch.setChecked(false);
             }
-        }else if (requestCode == 12) {
+        } else if (requestCode == 12) {
             if (resultCode == Activity.RESULT_OK) {
                 vibrationSwitch.setChecked(true);
                 shakeService.mDevicePolicyManager = devicePolicyManager;
